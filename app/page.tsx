@@ -11,11 +11,23 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { ChatSession } from "@/utils/aiModal";
+
+interface FormData {
+  name: string;
+  jobTitle: string;
+  jobDesc: string;
+  company: string;
+  skills: string;
+  experience: string;
+  coverLetter: string | any;
+}
 
 export default function Component() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     jobTitle: "",
+    jobDesc: "",
     company: "",
     skills: "",
     experience: "",
@@ -28,27 +40,27 @@ export default function Component() {
   };
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // setIsLoading(true);
-    console.log("red");
-    setIsModalOpen(true);
+    setIsLoading(true);
 
-    // try {
-    //   const response = await fetch("YOUR_API_URL", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify(formData),
-    //   });
-    //   const data = await response.json();
-    //   setFormData({ ...formData, coverLetter: data.coverLetter });
-    //   setIsModalOpen(true);
-    // } catch (error) {
-    //   console.error("Error generating cover letter:", error);
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    try {
+      const { name, jobTitle, company, skills, experience } = formData;
+      console.log(formData);
+
+      const inputPrompt = `Write A well-structured compelling cover letter that effectively conveys qualifications and enthusiasm for the position. using the ${jobTitle} position at ${company}, name of applicant ${name}, ${skills}, and ${experience}.`;
+      const result = await ChatSession.sendMessage(inputPrompt);
+
+      console.log(result.response.text());
+
+      const data = result.response.text();
+      setFormData({ ...formData, coverLetter: data });
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("Error generating cover letter:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   const handleCopyToClipboard = () => {
     console.log("blue");
 
@@ -90,6 +102,7 @@ export default function Component() {
                 required
               />
             </div>
+
             <div>
               <label
                 htmlFor="jobTitle"
@@ -107,6 +120,26 @@ export default function Component() {
                 required
               />
             </div>
+
+            <div>
+              <label
+                htmlFor="jobDesc"
+                className="block mb-1 font-medium text-gray-700 dark:text-gray-300"
+              >
+                Job Description
+              </label>
+
+              <textarea
+                id="jobDesc"
+                name="jobDesc"
+                value={formData.jobDesc}
+                onChange={handleInputChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-neutral-700 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600"
+                rows={3}
+                required
+              />
+            </div>
+
             <div>
               <label
                 htmlFor="company"
@@ -124,6 +157,7 @@ export default function Component() {
                 required
               />
             </div>
+
             <div>
               <label
                 htmlFor="skills"
@@ -141,6 +175,7 @@ export default function Component() {
                 required
               />
             </div>
+
             <div>
               <label
                 htmlFor="experience"
@@ -158,6 +193,7 @@ export default function Component() {
                 required
               />
             </div>
+            
             <button
               type="submit"
               className="w-full px-4 py-2 font-medium text-white bg-neutral-900 rounded-md hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"

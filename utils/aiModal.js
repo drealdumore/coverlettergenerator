@@ -4,7 +4,8 @@ const {
   HarmBlockThreshold,
 } = require("@google/generative-ai");
 
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = 'AIzaSyBQJztrA8vx3InGcxkTIHIDBmMQWP19ZPY';
+// const apiKey = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 const model = genAI.getGenerativeModel({
@@ -19,6 +20,7 @@ const generationConfig = {
   responseMimeType: "text/plain",
 };
 
-export const chatSession = model.startChat({
+export const ChatSession = model.startChat({
   generationConfig,
+  
 });
