@@ -33,6 +33,7 @@ export default function Component() {
     experience: "",
     coverLetter: "",
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleInputChange = (e: FormEvent<HTMLFormElement> | any) => {
@@ -43,13 +44,12 @@ export default function Component() {
     setIsLoading(true);
 
     try {
-      const { name, jobTitle, company, skills, experience } = formData;
-      console.log(formData);
+      const { name, jobTitle, company, skills, experience, jobDesc } = formData;
 
-      const inputPrompt = `Write A well-structured compelling cover letter that effectively conveys qualifications and enthusiasm for the position. using the ${jobTitle} position at ${company}, name of applicant ${name}, ${skills}, and ${experience}.`;
+      const inputPrompt = `Write A well-structured compelling cover letter that effectively conveys qualifications and enthusiasm for the position. using the ${jobTitle} position and ${jobDesc} at ${company}, name of applicant ${name}, ${skills}, and ${experience}.`;
       const result = await ChatSession.sendMessage(inputPrompt);
 
-      console.log(result.response.text());
+      // console.log(result.response.text());
 
       const data = result.response.text();
       setFormData({ ...formData, coverLetter: data });
@@ -62,11 +62,10 @@ export default function Component() {
   };
 
   const handleCopyToClipboard = () => {
-    console.log("blue");
-
     navigator.clipboard.writeText(formData.coverLetter);
     toast.success("Cover letter copied to clipboard!");
   };
+
   return (
     <div className="flex flex-col ">
       <header className="border-b border-neutral-200 bg-gray-100 text-neutral-900 py-4 px-6">
@@ -193,7 +192,7 @@ export default function Component() {
                 required
               />
             </div>
-            
+
             <button
               type="submit"
               className="w-full px-4 py-2 font-medium text-white bg-neutral-900 rounded-md hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
