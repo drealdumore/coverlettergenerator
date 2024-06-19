@@ -20,7 +20,8 @@ interface FormData {
   company: string;
   skills: string;
   experience: string;
-  coverLetter: string | any;
+  coverLetter: JSON | any;
+  // coverLetter: string | any;
 }
 
 export default function Component() {
@@ -36,6 +37,7 @@ export default function Component() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [iscopied, setIscopied] = useState(false);
   const handleInputChange = (e: FormEvent<HTMLFormElement> | any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -48,8 +50,8 @@ export default function Component() {
 
       const inputPrompt = `Write A well-structured compelling cover letter that effectively conveys qualifications and enthusiasm for the position. using the ${jobTitle} position and ${jobDesc} at ${company}, name of applicant ${name}, ${skills}, and ${experience}.`;
       const result = await ChatSession.sendMessage(inputPrompt);
-
-      // console.log(result.response.text());
+      
+      console.log(result.response.text());
 
       const data = result.response.text();
       setFormData({ ...formData, coverLetter: data });
@@ -63,11 +65,12 @@ export default function Component() {
 
   const handleCopyToClipboard = () => {
     navigator.clipboard.writeText(formData.coverLetter);
+    setIscopied(true);
     toast.success("Cover letter copied to clipboard!");
   };
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col absolute top-0 z-[-2] h-screen w-screen bg-white bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
       <header className="border-b border-neutral-200 bg-gray-100 text-neutral-900 py-4 px-6">
         <nav className="flex items-center justify-between">
           <div className="flex items-center">
@@ -203,8 +206,9 @@ export default function Component() {
           </form>
         </div>
       </div>
+
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md dark:bg-gray-800">
+        <DialogContent className="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md dark:bg-gray-800 dialog-content">
           <DialogHeader>
             <DialogTitle>Your Cover Letter</DialogTitle>
             <DialogDescription>
@@ -212,13 +216,13 @@ export default function Component() {
               clipboard.
             </DialogDescription>
           </DialogHeader>
-          <div className="prose prose-lg dark:prose-invert">
+          <div className="prose prose-lg dark:prose-invert dialog-body">
             <p>{formData.coverLetter}</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={handleCopyToClipboard}>
               <CopyIcon className="h-5 w-5 mr-2" />
-              Copy to Clipboard
+              {iscopied ? "Copied" : "Copy to Clipboard"}
             </Button>
           </DialogFooter>
         </DialogContent>
