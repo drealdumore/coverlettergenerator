@@ -48,7 +48,7 @@ export default function Component() {
     try {
       const { name, jobTitle, company, skills, experience, jobDesc } = formData;
 
-      const inputPrompt = `Write A well-structured compelling cover letter that effectively conveys qualifications and enthusiasm for the position. using the ${jobTitle} position and ${jobDesc} at ${company}, name of applicant ${name}, ${skills}, and ${experience}.`;
+      const inputPrompt = `Write A well-structured compelling cover letter that effectively conveys qualifications and enthusiasm for the position. using the ${jobTitle} position and ${jobDesc} at ${company}, name of applicant ${name}, ${skills}, and ${experience}. it should be without the address and start with dear hiring manager`;
       const result = await ChatSession.sendMessage(inputPrompt);
       
       console.log(result.response.text());
